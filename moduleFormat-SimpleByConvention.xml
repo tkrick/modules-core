@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Module Name="Simple.Service">
+  <Dependencies>
+    <DependsOn ModuleName="Vssf.Sdk" />
+    <DependsOn ModuleName="Vssf.SdkTools" />
+  </Dependencies>
+  <Exports >
+    <!-- below artifacts could be consumed through ModuleItemReference directly, or through the default symbol export, which would is the equivelent of this:
+    <Export Symbol="Default" />
+    
+    and would be consumed like this in a csproj:
+    <ModuleItemReference Include="Default">
+    </ModuleItemReference>
+    -->
+    
+    <!-- Add an Export element here for each artifact (i.e. a DLL) that this module exposes for other modules to consume via ModuleItemReference. -->
+    <Export Artifact="Microsoft.VisualStudio.Services.Zeus.Extensions.dll" Project="Extensions\MS.VS.Services.Zeus.Extensions.csproj" />
+    <Export Artifact="Microsoft.VisualStudio.Services.Zeus.PowerShell.dll" Project="PowerShell\MS.VS.Services.Zeus.PowerShell.csproj" />
+    <Export Artifact="Microsoft.VisualStudio.Services.Zeus.Server.dll" Project="Server\MS.VS.Services.Zeus.Server.csproj" />
+    <Export Artifact="Microsoft.VisualStudio.Services.Zeus.Server.Plugins.dll" Project="Plugins\MS.VS.Services.Zeus.Server.Plugins.csproj" />
+    <Export Artifact="Microsoft.VisualStudio.Services.Zeus.Servicing.dll" Project="Servicing\MS.VS.Services.Zeus.Servicing.csproj" />
+    <Export Artifact="Microsoft.VisualStudio.Services.Zeus.Sql.dll" Project="Sql\MS.VS.Services.Zeus.Sql.csproj" />
+    <Export Artifact="Microsoft.VisualStudio.Services.Zeus.Web.dll" Project="Web\Zeus\MS.VS.Services.Zeus.Web.csproj" />
+  </Exports>
+</Module>

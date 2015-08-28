@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Module Name="Some.Service">
+  <!--
+  definitely need tooling to ensure the exports you say you consume are the ones you do, at least underdeclared, especially if we are mapping from export to export
+  
+  keep in mind partial downloads of binary content should be dependent on the closure not just of consumed symbols, but of deployedWith entries.
+  -->
+  <Dependencies>
+    <DependsOn ModuleName="Vssf.Sdk" /> <!-- Default export consumes default export -->
+    <DependsOn ModuleName="Vssf.SdkTools">
+        <Mapping Symbol="ExportsWithArtifacts" ConsumedSymbol="SomeExportFromDependency1,SomeExportFromDependency2" />
+        <Mapping Symbol="ExportWithArtifactsAndExtensibilityPoint" ConsumedSymbol="SomeExportFromDependency1" />
+    </DependsOn>
+  </Dependencies>
+  <!-- defaultEnabled is new concept-->
+  <Exports DefaultEnabled="false"> <!-- by default defaultEnabled is true and includes all artifacts that do not have symbol entries or explicitly list 'Default' -->
+    <!-- 
+    Artifact-less export symbols are a new concept (or rather, they map on to p**man more easily and are invariant under artifact functionality splits or renames)
+    
+    notes: symbol names are case insensitive, and be consumed like this:
+    <ModuleItemReference Include="exportwithartifacts">
+    </ModuleItemReference>
+    
+    Extensibility attribute allows for props/targets to be used as extensibility points.  Only allowed for non-artifact symbol exports.
+    extensibility allows us to handle exports.extras.props cases and custom abstractions as well (when they are not mapped explicitly to any export)
+    -->
+    <Export Symbol="ExportWithArtifactsAndExtensibilityPoint" Extensibility="e1.props" />
+    <Export Symbol="ExportWithArtifacts" />
+    <Export Symbol="ExportWithOnlyExtensibilityPoint" Extensibility="e2.props" />
+      
+    <!-- built binary artifacts -->
+    <Export Artifact="some.dll" Symbol="ExportWithArtifacts,ExportWithArtifactsAndExtensibilityPoint" Project="Some\Some.csproj" />
+    <Export Artifact="some2.dll" Symbol="ExportWithArtifacts" Project="Some2\some.csproj" />
+    
+    <!-- built binary artifacts also deployedWith another symbol -->
+    <Export Artifact="some3.dll" Symbol="ExportWithArtifacts" Project="Some3\some3.csproj" 
+            DeployWith="ExportsWithArtifactsAndExtensibilityPoint,ExportsWithOnlyExtensibilityPoint" /> <!-- notice recursive deployment will consume this as well. -->
+
+    <!-- native dll -->
+    <Export Artifact="blah.dll" Symbol="ExportWithArtifacts" Project="Server\Blah.vcxproj" />
+    
+    <!-- native lib -->
+    <Export Artifact="blah.lib" Symbol="ExportWithArtifacts" Project="Server\Blah.vcxproj" />
+    
+    <!-- prebuilt native dll, default profile is managed, profile only needed for native dll prebuilts that ship as part of a symbol -->
+    <!-- technically symbol could be None and deployWith could be ExportWithArtifacts, dlls aren't part of build time referencing, but we need to know prebuilts are native to determine binary layout -->
+    <Export Artifact="blah.dll" Symbol="ExportWithArtifacts" Source="bin\amd64\debug" Profile="Native" /> 
+    <Export Artifact="blah.dll" Symbol="ExportWithArtifacts" Source="bin\amd64\retail" Profile="Native" />
+    
+    <!-- prebuilt native lib, not supporting multiple variants for now -->
+    <Export Artifact="blah.lib" Symbol="ExportWithArtifacts" Project="Server\Blah.vcxproj" Profile="Native" />
+    
+    <!-- Prebuilt, ideally there will be rules to ensure these aren't mapped in as source, or rather, can't export buildable artifacts and prebuilt artifacts in same project -->
+    <Export Artifact="somenativeprebuilt.dll" Symbol="ExportWithArtifacts,ExportWithArtifactsAndExtensibilityPoint" Source="bin\amd64" ConfigurationPlatform="Debug|amd64,Retail|amd64" Profile="Native" />
+    <Export Artifact="somenativeprebuilt.dll" Symbol="ExportWithArtifacts,ExportWithArtifactsAndExtensibilityPoint" Source="bin\i386" ConfigurationPlatform="Debug|amd64,Retail|amd64" Profile="Native" />
+    
+    <!-- built miscfile with no reference, only gets deployed, layout matching artifact path in all forms and in deployment 
+    'None' symbol implies layout comes from artifact path (in nuget, use content for no symbols, bin for symbols)
+    -->
+    <Export Artifact="DropLocation\somemiscfile.dll|txt" Symbol="None" Project="SomeMiscProject\somemiscproject.csproj" DeployWith="ExportWithArtifacts" />
+    
+    <!-- static miscfile with no reference, only gets deploy, layout matching artifact path in all forms and in deployment.  configurationplatform consumed to choose the winner, in source form. -->
+    <Export Artifact="DropReplicator\Microsoft.VisualStudio.Services.Zeus.Extensions2.dll|txt" Symbol="None" Location="debug" DeployWith="ExportWithArtifacts" ConfigurationPlatform="Debug|amd64" />
+    <Export Artifact="DropReplicator\Microsoft.VisualStudio.Services.Zeus.Extensions2.dll|txt" Symbol="None" Location="retail" DeployWith="ExportWithArtifacts" ConfigurationPlatform="Retail|amd64" />
+    
+    <!-- built misc folder with no reference, only gets deployed, layout matching artifact path in all forms and in deployment 
+    'None' symbol implies layout comes from artifact path (in nuget, use content for no symbols, bin for symbols)
+    -->
+    <Export Artifact="DropReplicator\SomeFolder" Symbol="None" Project="Server\MS.VS.Services.Zeus.Server2.csproj" DeployWith="ExportWithArtifacts" />
+    
+    <!-- static miscfolder with no reference, only gets deploy, layout matching artifact path in all forms and in deployment -->
+    <Export Artifact="DropReplicator\SomeFolder" Symbol="None" Location="Blah" DeployWith="ExportWithArtifacts" />
+    
+    
+    <!-- header with no reference, only gets deploy, layout matching artifact path in all forms and in deployment -->
+    <Export Artifact="DropReplicator\SomeFolder" Symbol="None" Location="Blah" DeployWith="ExportWithArtifacts" />
+    
+    <!-- static include folder -->
+    <Export Artifact="inc" Symbol="ExportWithArtifacts" Source="." Profile="Header" />
+    
+    <!-- built include folder -->
+    <Export Artifact="inc" Symbol="ExportWithArtifacts" Project="Blah\blah.vcxproj" Profile="Header" />
+  </Exports>
+</Module>
