@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Module Name="Some.Service">
+<Module Name="Some.Library">
   <!--
   definitely need tooling to ensure the exports you say you consume are the ones you do, at least underdeclared, especially if we are mapping from export to export
   
   keep in mind partial downloads of binary content should be dependent on the closure not just of consumed symbols, but of deployedWith entries.
   -->
   <Dependencies>
-    <DependsOn ModuleName="Vssf.Sdk" /> <!-- Default export consumes default export -->
-    <DependsOn ModuleName="Vssf.SdkTools">
+    <DependsOn ModuleName="SomeOther.Library" /> <!-- Default export consumes default export -->
+    <DependsOn ModuleName="SomeOther.Library">
         <Mapping Symbol="ExportsWithArtifacts" ConsumedSymbol="SomeExportFromDependency1,SomeExportFromDependency2" />
         <Mapping Symbol="ExportWithArtifactsAndExtensibilityPoint" ConsumedSymbol="SomeExportFromDependency1" />
     </DependsOn>
@@ -19,6 +19,7 @@
     
     notes: symbol names are case insensitive, and be consumed like this:
     <ModuleItemReference Include="exportwithartifacts">
+      <ModuleName>Some.Library</ModuleName>
     </ModuleItemReference>
     
     Extensibility attribute allows for props/targets to be used as extensibility points.  Only allowed for non-artifact symbol exports.
@@ -60,13 +61,13 @@
     <Export Artifact="DropLocation\somemiscfile.dll|txt" Symbol="None" Project="SomeMiscProject\somemiscproject.csproj" DeployWith="ExportWithArtifacts" />
     
     <!-- static miscfile with no reference, only gets deploy, layout matching artifact path in all forms and in deployment.  configurationplatform consumed to choose the winner, in source form. -->
-    <Export Artifact="DropReplicator\Microsoft.VisualStudio.Services.Zeus.Extensions2.dll|txt" Symbol="None" Location="debug" DeployWith="ExportWithArtifacts" ConfigurationPlatform="Debug|amd64" />
-    <Export Artifact="DropReplicator\Microsoft.VisualStudio.Services.Zeus.Extensions2.dll|txt" Symbol="None" Location="retail" DeployWith="ExportWithArtifacts" ConfigurationPlatform="Retail|amd64" />
+    <Export Artifact="DropReplicator\somemiscfile.dll|txt" Symbol="None" Location="debug" DeployWith="ExportWithArtifacts" ConfigurationPlatform="Debug|amd64" />
+    <Export Artifact="DropReplicator\somemiscfile.dll|txt" Symbol="None" Location="retail" DeployWith="ExportWithArtifacts" ConfigurationPlatform="Retail|amd64" />
     
     <!-- built misc folder with no reference, only gets deployed, layout matching artifact path in all forms and in deployment 
     'None' symbol implies layout comes from artifact path (in nuget, use content for no symbols, bin for symbols)
     -->
-    <Export Artifact="DropReplicator\SomeFolder" Symbol="None" Project="Server\MS.VS.Services.Zeus.Server2.csproj" DeployWith="ExportWithArtifacts" />
+    <Export Artifact="DropReplicator\SomeFolder" Symbol="None" Project="Some\Some.csproj" DeployWith="ExportWithArtifacts" />
     
     <!-- static miscfolder with no reference, only gets deploy, layout matching artifact path in all forms and in deployment -->
     <Export Artifact="DropReplicator\SomeFolder" Symbol="None" Location="Blah" DeployWith="ExportWithArtifacts" />
