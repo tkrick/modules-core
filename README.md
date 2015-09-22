@@ -1,5 +1,10 @@
 #ModulesV2 (spiffy name later)
 
+[![Windows Build status](https://ci.appveyor.com/api/projects/status/lmqrj55dvu0dgo79/branch/master?svg=true)](https://ci.appveyor.com/project/oliver-feng/modules-core/branch/master)
+
+[![Linux Build status](https://travis-ci.org/oliver-feng/modules-core.svg)](https://travis-ci.org/oliver-feng/modules-core)
+
+
 ## Back story
 P--man and S--rise are historic systems that are internal modularity systems.
 
