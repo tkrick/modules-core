@@ -29,7 +29,7 @@ We would like to create a modularity system (with default implementation in msbu
     - break build on underdeclared (and add overdeclared)
     - break build on going around abstractions
     - break build on taking illegal dependency (though S--rise implementation needs adjusting)
-- **S--rise BackCompat**: maintain backwards compatibility with S--rise modules (convention is that there is a default export if none is supplied, see moduleFormat-SimpleByConvention.xml for example)
+- **S--rise BackCompat**: maintain backwards compatibility with S--rise modules (convention is that there is a default export if none is supplied, see [moduleFormat-SimpleByConvention.xml](moduleFormat-SimpleByConvention.xml) for example)
 - **P--man BackCompat/Migratability**: map P--man's dependency types and granularity on to this format, so the migration granularity is practically 1:1
     - only major change is source form project location is explicit, not derived from a traversal.
     - technically could generate P--man modules as well from ModulesV2 format.
